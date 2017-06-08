@@ -1,0 +1,46 @@
+{## Start with  defaults from defaults.sls ##}
+{% import_yaml 'nut/defaults.yaml' as default_settings %}
+
+{##
+Setup variable using grains['os_family'] based logic, only add key:values here
+that differ from whats in defaults.yaml
+##}
+{% set os_family_map = salt['grains.filter_by']({
+    'Debian': {
+        'package': 'nut',
+        'server_service': 'nut-server',
+        'client_service': 'nut-client',
+        'ups_conf': '/etc/nut/ups.conf',
+        'nut_conf': '/etc/nut/nut.conf',
+        'upsd_conf': '/etc/nut/upsd.conf',
+        'upsd_users': '/etc/nut/upsd.users',
+        'alert': '/etc/nut/alert.sh',
+        'upsmon_conf': '/etc/nut/upsmon.conf',
+        'upssched_conf': '/etc/nut/upssched.conf',
+    },
+    'RedHat': {
+        'package': 'nut',
+        'server_service': 'nut-server',
+        'client_service': 'nut-client',
+        'ups_conf': '/etc/nut/ups.conf',
+        'nut_conf': '/etc/nut/nut.conf',
+        'upsd_conf': '/etc/nut/upsd.conf',
+        'upsd_users': '/etc/nut/upsd.users',
+        'alert': '/etc/nut/alert.sh',
+        'upsmon_conf': '/etc/nut/upsmon.conf',
+        'upssched_conf': '/etc/nut/upsmon.conf',
+    },
+  }
+  , grain="os_family"
+  , merge=salt['pillar.get']('nut:lookup'))
+%}
+{## Merge the flavor_map to the default settings ##}
+{% do default_settings.nut.update(os_family_map) %}
+
+{## Merge in nut:lookup pillar ##}
+{% set nut = salt['pillar.get'](
+        'nut',
+        default=default_settings.nut,
+        merge=True
+    )
+%}

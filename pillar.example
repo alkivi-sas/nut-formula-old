@@ -1,0 +1,32 @@
+nut:
+  config:
+    admin_user: admin
+    admin_password: changeme
+    upsmon_user: upsmon
+    upsmon_password: changemetoo
+    upsmon_mode: master
+    network_user: upsmon_network
+    network_password: changemealso
+    nut_mode: netserver
+    ups_name: default_name
+    driver: usbhid-ups
+    port: auto
+
+    users:
+      admin:
+        actions: SET
+        instcmds: ALL
+        password: changeme
+      upsmon:
+        password: changemetoo
+        mode: master
+      upsmon_network:
+        password: changemetoo
+        mode: slave
+
+    upsd:
+      listen_address: 0.0.0.0
+      port: 3493
+      master_user: upsmon
+
+    alert_email: root@localhost
